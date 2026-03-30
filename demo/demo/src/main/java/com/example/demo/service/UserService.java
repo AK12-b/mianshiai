@@ -5,6 +5,7 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -37,13 +38,27 @@ public class UserService {
     }
 
     public User register(User user) {
+        if (user.getEmail() == null || user.getEmail().isBlank()
+                || user.getUserName() == null || user.getUserName().isBlank()
+                || user.getPassword() == null || user.getPassword().isBlank()) {
+            return null;
+        }
+
         if (userRepository.existsByEmail(user.getEmail())) {
             return null;
         }
-        user.setCreateTime(LocalDateTime.now());
-        user.setUpdateTime(LocalDateTime.now());
-        user.setIsDelete(0);
-        return userRepository.save(user);
+        if (userRepository.existsByUserName(user.getUserName())) {
+            return null;
+        }
+
+        try {
+            user.setCreateTime(LocalDateTime.now());
+            user.setUpdateTime(LocalDateTime.now());
+            user.setIsDelete(0);
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            return null;
+        }
     }
 
     public User getUserById(Long userId) {

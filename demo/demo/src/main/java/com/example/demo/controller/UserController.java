@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
 public class UserController {
 
     private final UserService userService;
@@ -30,7 +30,7 @@ public class UserController {
         if (registeredUser != null) {
             return ApiResponse.success(registeredUser);
         }
-        return ApiResponse.error("注册失败，邮箱已存在");
+        return ApiResponse.error("注册失败，用户名或邮箱已存在，或提交信息不完整");
     }
 
     @GetMapping("/{userId}")
