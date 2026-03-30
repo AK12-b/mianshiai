@@ -1,0 +1,122 @@
+[
+  {
+    "question_id": 90,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 2,
+    "question_title": "说说 TCP 的三次握手?",
+    "question_answer": "核心目的：同步双方初始序列号，确保双向通信。流程：1)客户端发SYN(seq=x)；2)服务器回SYN+ACK(seq=y,ack=x+1)；3)客户端发ACK(ack=y+1)。状态变化：客户端SYN_SENT→ESTABLISHED，服务器LISTEN→SYN_RCVD→ESTABLISHED。",
+    "knowledge_point": "TCP协议",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  },
+  {
+    "question_id": 91,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 2,
+    "question_title": "说说 TCP 的四次挥手?",
+    "question_answer": "核心：可靠关闭全双工通道。流程：1)客户端发FIN；2)服务端回ACK（半关闭）；3)服务端发FIN；4)客户端回ACK，进入TIME_WAIT(2MSL)。TIME_WAIT防止ACK丢失，避免老报文干扰新连接。",
+    "knowledge_point": "TCP协议",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  },
+  {
+    "question_id": 92,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 2,
+    "question_title": "TCP 超时重传机制是为了解决什么问题?",
+    "question_answer": "解决网络丢包问题。逻辑：发送方启动RTO定时器，超时未收ACK则重传，采用指数退避策略。RTO随RTT动态调整，连续15次重传失败则断开连接，确保可靠传输。",
+    "knowledge_point": "TCP协议",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  },
+  {
+    "question_id": 93,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 1,
+    "question_title": "TCP/IP 四层模型是什么?",
+    "question_answer": "1)链路层：物理传输（以太网/Wi-Fi）；2)网络层：IP寻址路由（路由器）；3)传输层：TCP/UDP端到端通信；4)应用层：HTTP/FTP等协议，面向用户应用。",
+    "knowledge_point": "TCP/IP模型",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  },
+  {
+    "question_id": 94,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 2,
+    "question_title": "请描述简单工厂模式的工作原理?",
+    "question_answer": "集中对象创建：工厂类含静态方法，按输入类型（如json/xml）返回对应实例。客户端依赖抽象接口，无需手动new。适用于产品固定场景，违背开闭原则。",
+    "knowledge_point": "设计模式",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  },
+  {
+    "question_id": 95,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 2,
+    "question_title": "什么是原型模式?一般用在什么场景?",
+    "question_answer": "通过拷贝已有对象创建新对象，实现Cloneable并重写clone()。适用：创建成本高、配置微调、结构复杂差异小场景。注意浅拷贝需手动深拷贝引用类型。",
+    "knowledge_point": "设计模式",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  },
+  {
+    "question_id": 96,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 2,
+    "question_title": "什么是模板方法模式?一般用在什么场景?",
+    "question_answer": "父类固定算法骨架，可变步骤抽象，子类实现。适用：多子类流程相同、细节不同（如支付流程）。框架常用，如Spring JdbcTemplate封装固定逻辑。",
+    "knowledge_point": "设计模式",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  },
+  {
+    "question_id": 97,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 2,
+    "question_title": "什么是策略模式?一般用在什么场景?",
+    "question_answer": "算法封装为独立类（同一接口），运行时动态选择。解决if-else冗余，适用于行为分支多、需动态切换算法（如促销活动、报表导出）场景。",
+    "knowledge_point": "设计模式",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  },
+  {
+    "question_id": 98,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 1,
+    "question_title": "请用一句话概括,什么是设计模式?为什么要用?",
+    "question_answer": "前人总结的软件设计经典解决方案，复用思路、解耦提效、优化架构。分创建型（工厂）、结构型（代理）、行为型（观察者），主流框架广泛应用。",
+    "knowledge_point": "设计模式",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  },
+  {
+    "question_id": 99,
+    "post_id": 2,
+    "question_type": 1,
+    "question_level": 1,
+    "question_title": "HTML 的 src 和 href 属性有什么区别?",
+    "question_answer": "src：替换当前标签内容（如img/script），阻塞渲染；href：建立资源关联（如link/a），不阻塞。核心：src嵌入资源，href仅链接，不替换内容。",
+    "knowledge_point": "HTML基础",
+    "create_time": "2026-03-30 12:00:00",
+    "is_delete": 0,
+    "is_ai_generate": 0
+  }
+]
