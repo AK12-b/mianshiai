@@ -198,12 +198,24 @@ public class InterviewService {
         return interviewEvaluateRepository.save(evaluate);
     }
 
+    public Optional<MockInterview> getInterviewById(Long interviewId) {
+        return mockInterviewRepository.findById(interviewId);
+    }
+
     @Transactional
     public MockInterview endInterview(Long interviewId) {
+        return endInterview(interviewId, false);
+    }
+
+    @Transactional
+    public MockInterview endInterview(Long interviewId, boolean timeout) {
         MockInterview interview = mockInterviewRepository.findById(interviewId).orElse(null);
         if (interview != null) {
             interview.setEndTime(LocalDateTime.now());
             interview.setInterviewStatus(2);
+            if (timeout) {
+                interview.setIsTimeout(1);
+            }
             return mockInterviewRepository.save(interview);
         }
         return null;

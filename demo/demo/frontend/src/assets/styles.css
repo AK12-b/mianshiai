@@ -223,31 +223,8 @@ a {
 
 .auth-card h2 {
   font-size: 38px;
-  margin: 0 0 4px;
+  margin: 0 0 18px;
   letter-spacing: 1px;
-}
-
-.auth-tabs {
-  display: flex;
-  gap: 10px;
-  margin: 14px 0 14px;
-}
-
-.auth-tab {
-  border: 1px solid #cce8f7;
-  background: #f4fbff;
-  color: #355a7d;
-  border-radius: 9px;
-  padding: 8px 12px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.auth-tab.active {
-  border-color: var(--c5);
-  color: #1f6eb2;
-  background: #fff;
-  box-shadow: 0 4px 10px rgba(89, 188, 246, 0.18);
 }
 
 .auth-row {
@@ -403,7 +380,9 @@ a {
 .menu-title {
   margin: 10px 8px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
 }
 
 .menu-item {
@@ -416,11 +395,17 @@ a {
   padding: 11px 12px;
   margin-bottom: 6px;
   cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #173a5e;
+  transition: all 0.2s ease;
 }
 
 .menu-item.active {
   background: linear-gradient(90deg, rgba(89, 188, 246, 0.14), rgba(89, 188, 246, 0.03));
   color: #1177c8;
+  font-weight: 600;
 }
 
 .content {
@@ -688,6 +673,12 @@ a {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  background: linear-gradient(180deg, #ffffff, #f9fdff);
+}
+
+.user-info-item strong {
+  color: #173a5e;
+  font-size: 15px;
 }
 
 .modal-mask {

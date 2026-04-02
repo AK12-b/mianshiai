@@ -34,6 +34,14 @@
               <span class="muted">工作年限</span>
               <strong>{{ profile?.workYear || "--" }}</strong>
             </div>
+            <div class="user-info-item">
+              <span class="muted">手机号</span>
+              <strong>{{ profile?.phone || "--" }}</strong>
+            </div>
+            <div class="user-info-item">
+              <span class="muted">创建时间</span>
+              <strong>{{ fmtTime(profile?.createTime) }}</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -44,8 +52,32 @@
         <h3>登录日志</h3>
         <button class="btn btn-outline" @click="loadLoginLogs">刷新日志</button>
       </div>
-      <pre class="api-output">{{ logsOutput }}</pre>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>日志ID</th>
+            <th>登录时间</th>
+            <th>登出时间</th>
+            <th>状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in loginLogs" :key="row.logId">
+            <td>{{ row.logId ?? "--" }}</td>
+            <td>{{ fmtTime(row.loginTime) }}</td>
+            <td>{{ fmtTime(row.logoutTime) }}</td>
+            <td>
+              <span class="status-badge">{{ row.logoutTime ? "已退出" : "在线中" }}</span>
+            </td>
+          </tr>
+          <tr v-if="!loginLogs.length">
+            <td class="empty-cell" colspan="4">暂无登录日志。</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
+    <pre v-if="errorText" class="api-output">{{ errorText }}</pre>
   </section>
 </template>
 
@@ -55,7 +87,8 @@ import { useAppStore } from "../stores/app";
 
 const app = useAppStore();
 const profile = ref<any>(null);
-const logsOutput = ref("");
+const loginLogs = ref<any[]>([]);
+const errorText = ref("");
 
 const avatarText = computed(() => {
   const text = String(profile.value?.userName || app.user.name || "用户");
@@ -63,13 +96,29 @@ const avatarText = computed(() => {
 });
 
 async function loadMe() {
-  const data = await app.apiRequest(`/api/user/${app.uid}`);
-  profile.value = data;
+  errorText.value = "";
+  try {
+    const data = await app.apiRequest(`/api/user/${app.uid}`);
+    profile.value = data;
+  } catch (e: any) {
+    errorText.value = e?.message || "个人信息加载失败";
+  }
 }
 
 async function loadLoginLogs() {
-  const data = await app.apiRequest(`/api/user-login-log/user/${app.uid}`);
-  logsOutput.value = app.pretty(data);
+  errorText.value = "";
+  try {
+    const data = await app.apiRequest(`/api/user-login-log/user/${app.uid}`);
+    loginLogs.value = Array.isArray(data) ? data : [];
+  } catch (e: any) {
+    loginLogs.value = [];
+    errorText.value = e?.message || "登录日志加载失败";
+  }
+}
+
+function fmtTime(v: any) {
+  if (!v) return "--";
+  return String(v).replace("T", " ").slice(0, 19);
 }
 
 onMounted(() => {

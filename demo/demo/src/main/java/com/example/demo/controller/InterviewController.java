@@ -61,9 +61,18 @@ public class InterviewController {
         return ApiResponse.error("生成追问失败");
     }
 
+    @GetMapping("/{interviewId}")
+    public ApiResponse<MockInterview> getInterview(@PathVariable Long interviewId) {
+        Optional<MockInterview> interview = interviewService.getInterviewById(interviewId);
+        return interview.map(ApiResponse::success).orElseGet(() -> ApiResponse.error("面试不存在"));
+    }
+
     @PostMapping("/{interviewId}/end")
-    public ApiResponse<MockInterview> endInterview(@PathVariable Long interviewId) {
-        MockInterview interview = interviewService.endInterview(interviewId);
+    public ApiResponse<MockInterview> endInterview(
+            @PathVariable Long interviewId,
+            @RequestBody(required = false) Map<String, Object> body) {
+        boolean timeout = body != null && Boolean.TRUE.equals(body.get("timeout"));
+        MockInterview interview = interviewService.endInterview(interviewId, timeout);
         interviewService.evaluateInterview(interviewId);
         return ApiResponse.success(interview);
     }
