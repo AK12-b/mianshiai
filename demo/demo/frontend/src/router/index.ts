@@ -11,6 +11,8 @@ import ResourcesView from "../views/ResourcesView.vue";
 import UserCenterView from "../views/UserCenterView.vue";
 import GrowthDataView from "../views/GrowthDataView.vue";
 import SettingsView from "../views/SettingsView.vue";
+import InterviewReportView from "../views/InterviewReportView.vue";
+import InterviewSessionView from "../views/InterviewSessionView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -31,7 +33,9 @@ const router = createRouter({
         { path: "growth-data", component: GrowthDataView },
         { path: "profile", component: UserCenterView },
         { path: "settings", component: SettingsView },
-        { path: "user-center", redirect: "/app/profile" }
+        { path: "user-center", redirect: "/app/profile" },
+        { path: "interview-reports", component: InterviewReportView },
+        { path: "interview-session/:interviewId", component: InterviewSessionView }
       ]
     }
   ]

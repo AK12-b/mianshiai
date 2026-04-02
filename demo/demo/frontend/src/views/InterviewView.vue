@@ -98,7 +98,7 @@
           <td>{{ app.modeText(row.interviewMode) }}</td>
           <td><span class="status-badge">{{ app.statusText(row.status) }}</span></td>
           <td>
-            <button class="btn btn-text" @click="call(`/api/interview/${row.interviewId}/start`)">开始</button>
+            <button class="btn btn-text" @click="goSession(row.interviewId)">开始</button>
             <button class="btn btn-text" @click="call(`/api/interview/${row.interviewId}/pause`)">暂停</button>
             <button class="btn btn-text" @click="call(`/api/interview/${row.interviewId}/end`)">结束</button>
           </td>
@@ -116,7 +116,7 @@
         下一页
       </button>
     </div>
-    <pre class="api-output">{{ output || "[]" }}</pre>
+    <pre v-if="errorText" class="api-output">{{ errorText }}</pre>
   </section>
 </template>
 
@@ -125,11 +125,13 @@ import { onMounted } from "vue";
 import { useAppStore } from "../stores/app";
 import { reactive, ref } from "vue";
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 
 const app = useAppStore();
-const output = ref("");
+const router = useRouter();
+const errorText = ref("");
 const posts = ref<any[]>([]);
-const canCreate = computed(() => Number(form.postId) > 0);
+const canCreate = computed(() => posts.value.length > 0 && Number(form.postId) > 0);
 const form = reactive({
   postId: 1,
   interviewMode: 1,
@@ -141,20 +143,25 @@ const form = reactive({
 });
 
 async function loadInterviews() {
+  errorText.value = "";
   try {
     app.lists.interviews = (await app.apiRequest(`/api/interview/user/${app.uid}`)) || [];
     app.pager.interviewPage = 1;
-    output.value = app.pretty(app.lists.interviews);
   } catch (e: any) {
-    output.value = `加载失败：${e?.message || "未知错误"}`;
+    errorText.value = `加载失败：${e?.message || "未知错误"}`;
     app.showToast(e?.message || "加载失败");
   }
 }
 
 async function createInterview() {
+  errorText.value = "";
   try {
     if (!form.postId) {
       app.showToast("请先填写岗位ID");
+      return;
+    }
+    if (posts.value.length === 0) {
+      app.showToast("当前没有岗位数据，无法创建面试，请先新增岗位");
       return;
     }
     const payload = {
@@ -168,25 +175,30 @@ async function createInterview() {
       inputType: Number(form.inputType)
     };
     const res = await app.apiRequest("/api/interview/create", "POST", payload);
-    output.value = `创建成功\n${app.pretty(res)}`;
     app.showToast("创建成功");
     await loadInterviews();
+    // 创建后可直接进入面试环节
+    if (res?.interviewId) router.push(`/app/interview-session/${res.interviewId}`);
   } catch (e: any) {
-    output.value = `创建失败：${e?.message || "JSON格式错误或接口失败"}`;
+    errorText.value = `创建失败：${e?.message || "接口失败"}`;
     app.showToast(e?.message || "创建失败");
   }
 }
 
 async function call(url: string) {
+  errorText.value = "";
   try {
-    const res = await app.apiRequest(url, "POST");
-    output.value = `操作成功\n${app.pretty(res)}`;
+    await app.apiRequest(url, "POST");
     app.showToast("操作成功");
     await loadInterviews();
   } catch (e: any) {
-    output.value = `操作失败：${e?.message || "未知错误"}`;
+    errorText.value = `操作失败：${e?.message || "未知错误"}`;
     app.showToast(e?.message || "操作失败");
   }
+}
+
+function goSession(interviewId: number) {
+  router.push(`/app/interview-session/${interviewId}`);
 }
 
 onMounted(loadInterviews);
@@ -197,7 +209,7 @@ onMounted(async () => {
       form.postId = posts.value[0].postId;
     }
   } catch {
-    posts.value = [{ postId: 1, postName: "默认岗位" }];
+    posts.value = [];
   }
 });
 </script>

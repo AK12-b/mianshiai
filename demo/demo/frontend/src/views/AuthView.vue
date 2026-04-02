@@ -18,11 +18,6 @@
       <div class="auth-card">
         <h2>登录你的面试账户</h2>
 
-        <div class="auth-tabs">
-          <button class="auth-tab" :class="{ active: app.authTab === 'login' }" @click="app.authTab = 'login'">登录</button>
-          <button class="auth-tab" :class="{ active: app.authTab === 'register' }" @click="app.authTab = 'register'">注册</button>
-        </div>
-
         <div v-if="app.authTab === 'login'">
           <div class="field">
             <label>邮箱</label>
