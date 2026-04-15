@@ -30,6 +30,10 @@
               <option :value="10">10 分钟</option>
               <option :value="15">15 分钟</option>
               <option :value="20">20 分钟</option>
+              <option :value="30">30 分钟</option>
+              <option :value="40">40 分钟</option>
+              <option :value="50">50 分钟</option>
+              <option :value="60">60 分钟</option>
             </select>
           </div>
         </div>

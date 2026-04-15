@@ -64,11 +64,11 @@
               </select>
             </div>
             <div class="user-info-item">
-              <span class="muted">创建时间（系统维护）</span>
+              <span class="muted">创建时间</span>
               <strong>{{ fmtTime(profile?.createTime) }}</strong>
             </div>
             <div class="user-info-item">
-              <span class="muted">更新时间（系统维护）</span>
+              <span class="muted">更新时间</span>
               <strong>{{ fmtTime(profile?.updateTime) }}</strong>
             </div>
           </div>

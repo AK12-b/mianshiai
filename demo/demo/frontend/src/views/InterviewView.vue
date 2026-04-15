@@ -68,6 +68,10 @@
             <option :value="10">10</option>
             <option :value="15">15</option>
             <option :value="20">20</option>
+            <option :value="30">30</option>
+            <option :value="40">40</option>
+            <option :value="50">50</option>
+            <option :value="60">60</option>
           </select>
         </div>
         <div class="field" v-else>
@@ -79,8 +83,8 @@
         </div>
 
         <div class="iv-actions">
-          <button class="btn btn-outline" :disabled="currentStep === 0" @click="currentStep = Math.max(0, currentStep - 1)">上一步</button>
-          <button class="btn btn-outline" :disabled="currentStep === steps.length - 1" @click="currentStep = Math.min(steps.length - 1, currentStep + 1)">下一步</button>
+          <button class="btn btn-outline" :disabled="currentStep === 0" @click="goPrevStep">上一步</button>
+          <button class="btn btn-outline" :disabled="currentStep === steps.length - 1" @click="goNextStep">下一步</button>
           <button class="btn btn-primary" :disabled="!canCreate" @click="createInterview">创建面试</button>
           <button class="btn btn-outline" @click="loadInterviews">刷新列表</button>
         </div>
@@ -296,6 +300,24 @@ async function callTerminate(interviewId: number) {
   const st = row ? getStatus(row) : null;
   if (st === 2 || st === 3) return;
   await call(`/api/interview/${interviewId}/terminate`);
+}
+
+function goNextStep() {
+  if (currentStep.value === 1 && form.interviewMode === 1) {
+    // 选择全流程面试，跳过面试模块步骤
+    currentStep.value = 3;
+  } else {
+    currentStep.value = Math.min(steps.length - 1, currentStep.value + 1);
+  }
+}
+
+function goPrevStep() {
+  if (currentStep.value === 3 && form.interviewMode === 1) {
+    // 从面试官风格返回时，直接回到面试模式选择
+    currentStep.value = 1;
+  } else {
+    currentStep.value = Math.max(0, currentStep.value - 1);
+  }
 }
 
 async function goSession(id: number | string) {
