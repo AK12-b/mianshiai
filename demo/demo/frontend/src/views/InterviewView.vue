@@ -346,16 +346,16 @@ onMounted(async () => {
 <style scoped>
 .iv-wrap {
   display: grid;
-  gap: 12px;
+  gap: 2px;
 }
 
 .iv-steps {
   display: flex;
   align-items: stretch;
-  gap: 8px;
+  gap: 4px;
   overflow-x: auto;
-  margin-top: -8px;
-  padding-bottom: 4px;
+  margin-top: -50px;
+  padding-bottom: 40px;
 }
 .iv-step {
   min-width: 150px;
@@ -364,6 +364,11 @@ onMounted(async () => {
   background: #fff;
   padding: 8px 10px;
   cursor: pointer;
+   text-align: center;
+   display: flex;
+  flex-direction: column;
+  justify-content: center; /* 让内容在垂直方向居中 */
+
 }
 .iv-step.active {
   border-color: #7ccbed;
@@ -379,6 +384,8 @@ onMounted(async () => {
   display: grid;
   place-items: center;
   margin-bottom: 4px;
+    margin-left: auto;
+  margin-right: auto;
 }
 .iv-step-label {
   font-size: 13px;

@@ -410,15 +410,17 @@ onMounted(() => {
   display: grid;
   grid-template-columns: minmax(0, 2.6fr) minmax(320px, 1fr);
   gap: 12px;
-  align-items: start;
+   align-items: stretch;
+    min-height: calc(100vh - 140px);
 }
 .practice-main {
   min-width: 0;
+   min-height: 100%;
 }
 .practice-side {
   position: sticky;
   top: 90px;
-  max-height: calc(100vh - 140px);
+  max-height: 100%;
   overflow: auto;
 }
 .practice-weak-list { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }

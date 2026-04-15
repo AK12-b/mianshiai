@@ -1,6 +1,6 @@
 <template>
   <section class="card pv-wrap">
-    <h3 style="margin-top: 0">专项练习 - 启动配置</h3>
+    <h3 style="margin-top: 0; margin-bottom: 8px">专项练习 - 启动配置</h3>
 
     <div class="pv-steps">
       <template v-for="(s, idx) in steps" :key="s.key">
@@ -328,9 +328,10 @@ onMounted(() => {
 .pv-steps {
   display: flex;
   align-items: stretch;
-  gap: 8px;
+  gap: 4px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  margin-top: -80px;
+  padding-bottom: 40px;
 }
 .pv-step {
   min-width: 150px;
@@ -339,6 +340,11 @@ onMounted(() => {
   background: #fff;
   padding: 8px 10px;
   cursor: pointer;
+    cursor: pointer;
+   text-align: center;
+   display: flex;
+  flex-direction: column;
+  justify-content: center; /* 让内容在垂直方向居中 */
 }
 .pv-step.active {
   border-color: #7ccbed;
@@ -354,6 +360,8 @@ onMounted(() => {
   display: grid;
   place-items: center;
   margin-bottom: 4px;
+      margin-left: auto;
+  margin-right: auto;
 }
 .pv-step-label {
   font-size: 13px;
