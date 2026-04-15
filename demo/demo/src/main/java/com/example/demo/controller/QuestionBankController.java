@@ -17,6 +17,13 @@ public class QuestionBankController {
 
     private final QuestionBankService questionBankService;
 
+    /** 字面路径放在含路径变量的映射之前，避免个别环境下与 /{id} 类模式冲突 */
+    @GetMapping("/list")
+    public ApiResponse<List<QuestionBank>> getAllQuestions() {
+        List<QuestionBank> questions = questionBankService.getAllQuestions();
+        return ApiResponse.success(questions);
+    }
+
     @PostMapping("/add")
     public ApiResponse<QuestionBank> addQuestion(@RequestBody Map<String, Object> request) {
         Long postId = Long.valueOf(request.get("postId").toString());
@@ -71,7 +78,8 @@ public class QuestionBankController {
         return ApiResponse.success(questions);
     }
 
-    @GetMapping("/{questionId}")
+    /** 使用 /question/{id}，避免与字面路径 /list 在部分环境下的匹配歧义（list 被当成 id 会导致 500） */
+    @GetMapping("/question/{questionId}")
     public ApiResponse<QuestionBank> getQuestionById(@PathVariable Long questionId) {
         QuestionBank question = questionBankService.getQuestionById(questionId);
         if (question != null) {
@@ -80,9 +88,10 @@ public class QuestionBankController {
         return ApiResponse.error("题目不存在");
     }
 
-    @GetMapping("/list")
-    public ApiResponse<List<QuestionBank>> getAllQuestions() {
-        List<QuestionBank> questions = questionBankService.getAllQuestions();
+    @PostMapping("/ensure-answers")
+    public ApiResponse<List<QuestionBank>> ensureAnswersByKnowledgePoint(@RequestBody Map<String, Object> request) {
+        String knowledgePoint = request.get("knowledgePoint") == null ? "" : String.valueOf(request.get("knowledgePoint"));
+        List<QuestionBank> questions = questionBankService.ensureAnswersByKnowledgePoint(knowledgePoint);
         return ApiResponse.success(questions);
     }
 }

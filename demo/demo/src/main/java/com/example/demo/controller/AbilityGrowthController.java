@@ -45,4 +45,30 @@ public class AbilityGrowthController {
         List<AbilityGrowth> growths = abilityGrowthService.getUserGrowthRecords(userId);
         return ApiResponse.success(growths);
     }
+
+    @GetMapping("/user/{userId}/dimension-trend")
+    public ApiResponse<List<Map<String, Object>>> getUserDimensionTrend(@PathVariable Long userId) {
+        List<Map<String, Object>> trend = abilityGrowthService.getUserDimensionTrend(userId);
+        return ApiResponse.success(trend);
+    }
+
+    /**
+     * 按周展示用：返回「本周（周一~周日）」的每日维度数据。未有面试/评估的日期不会返回，前端负责补空。
+     * 可选 postId：为空/0 表示全部岗位。
+     */
+    @GetMapping("/user/{userId}/daily-trend")
+    public ApiResponse<List<Map<String, Object>>> getUserDailyTrend(
+            @PathVariable Long userId,
+            @RequestParam(value = "postId", required = false) Long postId) {
+        List<Map<String, Object>> trend = abilityGrowthService.getUserDailyTrendForCurrentWeek(userId, postId);
+        return ApiResponse.success(trend);
+    }
+
+    @GetMapping("/user/{userId}/radar-metric")
+    public ApiResponse<Map<String, Object>> getUserRadarMetric(
+            @PathVariable Long userId,
+            @RequestParam(value = "cycle", required = false) Integer cycle,
+            @RequestParam(value = "postId", required = false) Long postId) {
+        return ApiResponse.success(abilityGrowthService.getRadarMetricByCycle(userId, cycle, postId));
+    }
 }

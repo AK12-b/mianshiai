@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponse;
+import com.example.demo.dto.ChangePasswordRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
@@ -47,5 +48,18 @@ public class UserController {
         user.setUserId(userId);
         User updatedUser = userService.updateUser(user);
         return ApiResponse.success(updatedUser);
+    }
+
+    @PostMapping("/change-password")
+    public ApiResponse<Boolean> changePassword(@RequestBody ChangePasswordRequest request) {
+        boolean ok = userService.changePassword(
+                request.getUserId(),
+                request.getOldPassword(),
+                request.getNewPassword()
+        );
+        if (ok) {
+            return ApiResponse.success(true);
+        }
+        return ApiResponse.error("修改失败：请检查原密码是否正确，新密码至少 6 位且不能与原密码相同");
     }
 }

@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface PracticeSingleTaskRepository extends JpaRepository<PracticeSingleTask, Long> {
     List<PracticeSingleTask> findByMasterIdAndIsDeleteOrderByCreateTimeDesc(Long masterId, Integer isDelete);
+    List<PracticeSingleTask> findByUserIdAndIsDeleteOrderByCreateTimeDesc(Long userId, Integer isDelete);
+    List<PracticeSingleTask> findByUserIdAndPostIdAndIsDeleteOrderByCreateTimeDesc(Long userId, Long postId, Integer isDelete);
 }

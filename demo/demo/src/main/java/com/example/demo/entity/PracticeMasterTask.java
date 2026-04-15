@@ -20,6 +20,9 @@ public class PracticeMasterTask {
 
     private String knowledgePoint;
 
+    @Column(name = "module_type")
+    private Integer moduleType;
+
     private Integer practiceLevel;
 
     private Integer taskCycle;

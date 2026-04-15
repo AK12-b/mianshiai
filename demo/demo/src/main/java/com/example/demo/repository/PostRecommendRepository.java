@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PostRecommendRepository extends JpaRepository<PostRecommend, Long> {
     List<PostRecommend> findByUserIdAndIsDeleteOrderByCreateTimeDesc(Long userId, Integer isDelete);
+    boolean existsByUserIdAndOriginalPostIdAndRecommendPostIdAndIsDelete(Long userId, Long originalPostId, Long recommendPostId, Integer isDelete);
 }

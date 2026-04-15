@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PracticeQuestionRecordRepository extends JpaRepository<PracticeQuestionRecord, Long> {
     List<PracticeQuestionRecord> findBySingleIdAndIsDelete(Long singleId, Integer isDelete);
+    List<PracticeQuestionRecord> findByUserIdAndIsDelete(Long userId, Integer isDelete);
 }

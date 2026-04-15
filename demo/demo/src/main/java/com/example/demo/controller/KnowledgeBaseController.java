@@ -55,4 +55,20 @@ public class KnowledgeBaseController {
         List<KnowledgeBase> knowledges = knowledgeBaseService.getKnowledgeByPostId(postId);
         return ApiResponse.success(knowledges);
     }
+
+    /** 学习资源页：读取 knowledge_base 全量知识点 */
+    @GetMapping("/list")
+    public ApiResponse<List<KnowledgeBase>> listAll() {
+        return ApiResponse.success(knowledgeBaseService.getAllKnowledge());
+    }
+
+    /** 重新调用分类智能体并更新 category_id（服务端带 API Key，勿在前端直连百炼） */
+    @PostMapping("/{knowledgeId}/reclassify")
+    public ApiResponse<KnowledgeBase> reclassify(@PathVariable Long knowledgeId) {
+        KnowledgeBase k = knowledgeBaseService.reclassifyKnowledge(knowledgeId);
+        if (k != null) {
+            return ApiResponse.success(k);
+        }
+        return ApiResponse.error("记录不存在");
+    }
 }

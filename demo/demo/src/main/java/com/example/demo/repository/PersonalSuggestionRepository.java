@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PersonalSuggestionRepository extends JpaRepository<PersonalSuggestion, Long> {
     List<PersonalSuggestion> findByUserIdAndIsDeleteOrderByCreateTimeDesc(Long userId, Integer isDelete);
+    boolean existsByUserIdAndPostIdAndIsDelete(Long userId, Long postId, Integer isDelete);
 }

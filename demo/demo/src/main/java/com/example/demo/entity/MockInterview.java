@@ -30,11 +30,16 @@ public class MockInterview {
 
     private Integer inputType;
 
+    /** 首次出题时写入；创建时可为空，避免「创建后未进场」已耗光时长 */
+    @Column(nullable = true)
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
 
     private Integer interviewStatus;
+
+    /** 暂停时剩余的面试时长（秒），恢复后清空 */
+    private Integer pausedRemainingSec;
 
     private Integer isTimeout;
 
@@ -150,6 +155,14 @@ public class MockInterview {
 
     public void setInterviewStatus(Integer interviewStatus) {
         this.interviewStatus = interviewStatus;
+    }
+
+    public Integer getPausedRemainingSec() {
+        return pausedRemainingSec;
+    }
+
+    public void setPausedRemainingSec(Integer pausedRemainingSec) {
+        this.pausedRemainingSec = pausedRemainingSec;
     }
 
     public Integer getIsTimeout() {

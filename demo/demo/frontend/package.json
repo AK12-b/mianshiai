@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "sync:spring": "vite build",
+    "watch:spring": "vite build --watch",
     "build:spring": "vite build && cd .. && .\\mvnw.cmd -q compile -DskipTests",
     "build:watch": "vite build --watch",
     "preview": "vite preview"

@@ -32,6 +32,12 @@ public class User {
 
     private Integer themeMode;
 
+    private Integer defaultInterviewMode;
+
+    private String defaultInterviewModule;
+
+    private Integer defaultInterviewDuration;
+
     private LocalDateTime lastLoginTime;
 
     private LocalDateTime createTime;

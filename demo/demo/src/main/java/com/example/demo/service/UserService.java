@@ -66,7 +66,51 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+        if (user.getUserId() == null) return null;
+        User db = userRepository.findById(user.getUserId()).orElse(null);
+        if (db == null) return null;
+
+        // 仅更新允许修改的字段；创建时间/更新时间由系统维护
+        db.setUserName(user.getUserName());
+        db.setEmail(user.getEmail());
+        db.setGender(user.getGender());
+        db.setSkillProficiency(user.getSkillProficiency()); // 作为“专业”使用
+        db.setEducation(user.getEducation());
+        db.setGrade(user.getGrade());
+        db.setProjectExp(user.getProjectExp());
+        db.setCompetitionAward(user.getCompetitionAward());
+        db.setSkillTag(user.getSkillTag());
+        if (user.getDefaultInterviewMode() != null) db.setDefaultInterviewMode(user.getDefaultInterviewMode());
+        if (user.getDefaultInterviewModule() != null) db.setDefaultInterviewModule(user.getDefaultInterviewModule());
+        if (user.getDefaultInterviewDuration() != null) db.setDefaultInterviewDuration(user.getDefaultInterviewDuration());
+        db.setUpdateTime(LocalDateTime.now());
+        return userRepository.save(db);
+    }
+
+    public boolean changePassword(Long userId, String oldPassword, String newPassword) {
+        if (userId == null || oldPassword == null || newPassword == null) {
+            return false;
+        }
+        String oldPwd = oldPassword.trim();
+        String newPwd = newPassword.trim();
+        if (oldPwd.isEmpty() || newPwd.isEmpty() || newPwd.length() < 6) {
+            return false;
+        }
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null || user.getIsDelete() == null || user.getIsDelete() != 0) {
+            return false;
+        }
+        if (!oldPwd.equals(user.getPassword())) {
+            return false;
+        }
+        if (oldPwd.equals(newPwd)) {
+            return false;
+        }
+
+        user.setPassword(newPwd);
         user.setUpdateTime(LocalDateTime.now());
-        return userRepository.save(user);
+        userRepository.save(user);
+        return true;
     }
 }

@@ -4,14 +4,28 @@ import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.AnswerRequest;
 import com.example.demo.dto.InterviewConfigRequest;
 import com.example.demo.entity.*;
+import com.example.demo.repository.PostRepository;
+import com.example.demo.service.InterviewInterviewerPromptBuilder;
 import com.example.demo.service.InterviewService;
+import com.example.demo.service.OmniRealtimeTtsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.springframework.http.HttpStatus.BAD_GATEWAY;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/interview")
 @RequiredArgsConstructor
@@ -19,6 +33,8 @@ import java.util.Optional;
 public class InterviewController {
 
     private final InterviewService interviewService;
+    private final PostRepository postRepository;
+    private final OmniRealtimeTtsService omniRealtimeTtsService;
 
     @PostMapping("/create")
     public ApiResponse<MockInterview> createInterview(@RequestBody Map<String, Object> request) {
@@ -73,6 +89,9 @@ public class InterviewController {
             @RequestBody(required = false) Map<String, Object> body) {
         boolean timeout = body != null && Boolean.TRUE.equals(body.get("timeout"));
         MockInterview interview = interviewService.endInterview(interviewId, timeout);
+        if (interview == null) {
+            return ApiResponse.error("仅「进行中」或「已暂停」的面试可结束并生成报告");
+        }
         interviewService.evaluateInterview(interviewId);
         return ApiResponse.success(interview);
     }
@@ -83,7 +102,16 @@ public class InterviewController {
         if (interview != null) {
             return ApiResponse.success(interview);
         }
-        return ApiResponse.error("暂停失败");
+        return ApiResponse.error("仅「进行中」的面试可暂停");
+    }
+
+    @PostMapping("/{interviewId}/resume")
+    public ApiResponse<MockInterview> resumeInterview(@PathVariable Long interviewId) {
+        MockInterview interview = interviewService.resumeInterview(interviewId);
+        if (interview != null) {
+            return ApiResponse.success(interview);
+        }
+        return ApiResponse.error("仅「已暂停」的面试可继续");
     }
 
     @PostMapping("/{interviewId}/terminate")
@@ -92,7 +120,7 @@ public class InterviewController {
         if (interview != null) {
             return ApiResponse.success(interview);
         }
-        return ApiResponse.error("终止失败");
+        return ApiResponse.error("仅「进行中」或「已暂停」的面试可终止");
     }
 
     @GetMapping("/user/{userId}")
@@ -125,9 +153,48 @@ public class InterviewController {
         return ApiResponse.success(dialogs);
     }
 
+    /**
+     * 语音面试：使用 CosyVoice（默认 cosyvoice-v3-flash，SpeechSynthesizer）将面试官台词合成为 WAV，仅服务端持有 API Key。
+     */
+    @PostMapping("/{interviewId}/realtime-tts")
+    public ResponseEntity<byte[]> realtimeTts(@PathVariable Long interviewId, @RequestBody Map<String, Object> body) {
+        Long userId = Long.valueOf(body.get("userId").toString());
+        String text = body.get("text") != null ? body.get("text").toString().trim() : "";
+        if (text.isEmpty()) {
+            throw new ResponseStatusException(BAD_REQUEST, "text 为空");
+        }
+        MockInterview interview =
+                interviewService
+                        .getInterviewById(interviewId)
+                        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "面试不存在"));
+        if (!userId.equals(interview.getUserId())) {
+            throw new ResponseStatusException(FORBIDDEN, "无权访问该面试");
+        }
+        Post post = postRepository.findById(interview.getPostId()).orElseGet(Post::new);
+        String instructions = InterviewInterviewerPromptBuilder.buildInstructions(interview, post);
+        try {
+            byte[] wav =
+                    omniRealtimeTtsService.synthesizeInterviewerLineWav(
+                            instructions, text, interview.getAiCharacter(), interview.getAiGender());
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("audio/wav"))
+                    .header(HttpHeaders.CACHE_CONTROL, "no-store")
+                    .body(wav);
+        } catch (Exception e) {
+            log.warn("Realtime TTS 失败 interviewId={}", interviewId, e);
+            throw new ResponseStatusException(BAD_GATEWAY, e.getMessage() != null ? e.getMessage() : "TTS 失败");
+        }
+    }
+
     @GetMapping("/{interviewId}/evaluate")
     public ApiResponse<InterviewEvaluate> getInterviewEvaluate(@PathVariable Long interviewId) {
         Optional<InterviewEvaluate> evaluate = interviewService.getInterviewEvaluate(interviewId);
         return evaluate.map(ApiResponse::success).orElseGet(() -> ApiResponse.error("评估报告不存在"));
+    }
+
+    @GetMapping("/{interviewId}/report-detail")
+    public ApiResponse<List<Map<String, Object>>> getReportDetail(@PathVariable Long interviewId) {
+        List<Map<String, Object>> detail = interviewService.getReportQaDetail(interviewId);
+        return ApiResponse.success(detail);
     }
 }
